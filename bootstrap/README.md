@@ -59,9 +59,9 @@ Inspired by [billimek's homelab infrastructure](https://github.com/billimek/home
 ### Testing the Setup
 
 6. **Verification**:
-   - Test the RPI using the patient mobile app or the ping API. Replace `localhost` with the RPI's IP address:
+   - Test the RPI using an edge app component for instance a simple ping/pong endpoint. Replace `localhost` with the RPI's IP address:
      ```shell
-     localhost:30080/api/v1/lifechamps/ping # Should return "pong"
+     localhost:30080/api/v1/ping # Should return "pong"
      ```
 
 7. **Troubleshooting**:
