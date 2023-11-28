@@ -1,0 +1,53 @@
+#cloud-config
+
+# Set hostname
+hostname: ubuntu
+
+# Set user password
+chpasswd:
+  expire: false
+  list:
+  - ubuntu:$UBUNTU_PASSWORD
+
+# Enable password authentication with the SSH daemon
+ssh_pwauth: true
+
+# Import SSH key from GitHub (replace 'xxxxxx' with your GitHub username)
+#ssh_import_id:
+#- gh:xxxxxx
+
+# Update apt database and upgrade packages on first boot
+package_update: true
+package_upgrade: true
+
+# Configure NTP servers
+ntp:
+  enabled: true
+  servers:
+    - ntp1.sp.se
+
+# Install necessary packages
+packages:
+- curl
+- wget
+- htop
+- linux-modules-extra-raspi
+- emacs-nox
+- pi-bluetooth
+- bluez
+
+# Run commands after boot
+runcmd:
+  # Install MicroK8s
+  - snap install microk8s --classic
+  - microk8s enable storage dns
+  
+  # Clone the GitOps repository (replace 'username' and 'password/token' with your GitHub credentials)
+  # It's recommended to use SSH or a secure method for storing these credentials
+  - git clone https://<username>:<password/token>@github.com/LifeChamps/edge/k8s-gitops.git
+
+  # Apply configurations using MicroK8s and kubectl
+  - cd k8s-gitops
+  - microk8s.kubectl apply -f puc1/flux-system/gotk-components.yaml
+  - microk8s.kubectl create secret -n flux-system generic flux-system --from-literal=username=<username> --from-literal=password=<password/token>
+  - microk8s.kubectl apply -f puc1/flux-system/gotk-sync.yaml
