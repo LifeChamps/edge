@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  # Name of the Secret
+  name: teams-url
+  # Namespace where the Secret is deployed
+  namespace: flux-system
+data:
+  # Encoded webhook URL for Microsoft Teams notifications
+  address: <base64-encoded-webhook-url>
+
+# Instructions and Comments:
+# - This Secret stores the Microsoft Teams webhook URL for sending notifications.
+# - 'metadata.name': The name given to this Secret. Can be referenced in other Kubernetes configurations.
+# - 'metadata.namespace': The namespace where this Secret is created. Typically used in 'flux-system' for FluxCD configurations.
+# - 'data.address': This should contain the base64-encoded URL of the Microsoft Teams webhook.
+
+# Creating and Encoding the Webhook URL:
+# 1. Obtain your Microsoft Teams webhook URL. It usually looks like:
+#    https://outlook.office.com/webhook/... 
+# 2. Base64 encode this URL. You can use an online base64 encoder or command-line tools. For example, in Linux:
+#    echo -n 'https://outlook.office.com/webhook/...' | base64
+# 3. Replace <base64-encoded-webhook-url> with your base64-encoded URL.
+
+# Remember:
+# - Keep this webhook URL secret as it allows messages to be sent to your Teams channel.
+# - If you change the webhook URL, you need to update and re-apply this Secret.

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  # Replace 'generic-name' with the name of your StatefulSet
+  name: generic-name
+spec:
+  selector:
+    matchLabels:
+      # Update this label to match the labels of your pods
+      app: generic-app
+  # Replace 'service-name' with the name of the service that this StatefulSet is part of
+  serviceName: service-name
+  # Set the number of replicas for this StatefulSet
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # This should match the selector label above
+        app: generic-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              # Replace or modify the node affinity settings as required
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - node-name
+      # Define image pull secrets if pulling from a private registry
+      imagePullSecrets:
+      - name: registry-secret-name
+      containers:
+      - name: container-name
+        # Replace with the image path for your container
+        image: registry/path/to/your/image:tag
+        ports:
+        # Define the ports your container exposes
+        - containerPort: 3000
+          name: http
+        # Define volume mounts if required
+        volumeMounts:
+        - name: volume-name
+          mountPath: /path/in/container
+        env:
+        # Define environment variables required by your container
+        - name: ENV_VAR_NAME
+          value: value
+        # Add more environment variables as needed
+  volumeClaimTemplates:
+  - metadata:
+      name: volume-name
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "storage-class-name"
+      resources:
+        requests:
+          storage: 25Mi
+      selector:
+        matchLabels:
+          # Modify labels to match the volume for your application
+          service: your-service
+          type: your-type

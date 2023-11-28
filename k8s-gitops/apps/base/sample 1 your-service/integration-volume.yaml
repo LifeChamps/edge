@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  # Replace 'pv-name' with the name of your PersistentVolume
+  name: pv-name
+  labels:
+    # Update these labels according to your application's needs
+    app: generic-app
+    type: local
+spec:
+  capacity:
+    # Adjust the storage capacity as needed
+    storage: 25Mi
+  accessModes:
+  - ReadWriteOnce
+  # Update the storage class name if you are using a specific storage class
+  storageClassName: manual
+  hostPath:
+    # Specify the path on the host machine for storage
+    path: "/path/to/your/data"
+
+# Instructions and Comments:
+# - Metadata: Replace 'pv-name' with a meaningful name for your PersistentVolume.
+# - Labels: Modify these labels to match your application's labeling scheme.
+# - Capacity: Adjust the 'storage' value to allocate the required amount of storage.
+# - Access Modes: 'ReadWriteOnce' means the volume can be mounted as read-write by a single node.
+#   Other options include 'ReadOnlyMany' or 'ReadWriteMany'.
+# - Storage Class: Specify an existing storage class or use 'manual' for no dynamic provisioning.
+# - Host Path: Provide the host machine path where the data for this volume will be stored.
+#   This is specific to hostPath volumes and should be used carefully as it ties the volume
+#   to a specific node.

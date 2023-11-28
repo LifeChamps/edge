@@ -1,0 +1,36 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  # Name of the Kustomization object
+  name: infrastructure
+  # Namespace where the Kustomization object is deployed
+  namespace: flux-system
+spec:
+  # Interval at which to reconcile the Kustomization
+  interval: 5m0s
+  # Path to the directory containing Kustomize files in the Git source
+  path: ./infrastructure
+  # Whether to prune resources that are no longer needed
+  prune: true
+  sourceRef:
+    # Type of the source; here, it refers to a GitRepository
+    kind: GitRepository
+    # Name of the GitRepository object
+    name: flux-system
+  # Defines how to handle resource validation
+  validation: client
+  # If set to true, the reconciliation will wait for all applied resources to be ready
+  wait: true
+
+# Comments:
+# - This Kustomization object is a Flux CD custom resource. 
+#   It tells Flux to apply Kubernetes manifests found in a particular path in a Git repository.
+# - 'metadata.name': The name given to this Kustomization instance.
+# - 'metadata.namespace': Namespace where this Kustomization is applied, typically 'flux-system'.
+# - 'spec.interval': Frequency at which Flux checks for updates in the Git repository.
+# - 'spec.path': The directory within the Git repository containing the Kustomize manifests.
+# - 'spec.prune': When set to true, resources not in the repository are removed from the cluster.
+# - 'spec.sourceRef': Points to the source of manifests, in this case, a GitRepository.
+# - 'spec.validation': Specifies how the resources are validated ('client' or 'server').
+# - 'spec.wait': If true, Flux will wait for all resources to be fully ready before marking the sync as complete.

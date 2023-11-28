@@ -1,0 +1,13 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Provider
+metadata:
+  name: edge
+  namespace: flux-system
+#spec:
+#  type: generic
+#  address: http://<your-general-url>/api/v1/notifications
+
+# This is a generic notification provider for FluxCD.
+# It's currently disabled by default.
+# To enable, uncomment the 'spec' section and replace '<your-general-url>' with your actual notification URL.
+

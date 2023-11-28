@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  # Replace 'generic-cronjob-name' with the name of your CronJob
+  name: generic-cronjob-name
+  # Specify the namespace where this CronJob will be deployed
+  namespace: default-namespace
+spec:
+  # Set the number of failed jobs to retain
+  failedJobsHistoryLimit: 1
+  # Define the concurrency policy (Allow, Forbid, Replace)
+  concurrencyPolicy: Forbid
+  # Define the schedule in Cron format
+  schedule: "*/5 * * * *"
+  # Set the number of successful jobs to retain
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          # Define volumes required by the container
+          - name: volume-name
+            hostPath:
+              path: "/path/on/host"
+              type: Socket
+          containers:
+          - name: container-name
+            # Replace with the image path for your container
+            image: registry/path/to/your/image:tag
+            volumeMounts:
+            # Specify where to mount the volume in the container
+            - mountPath: /path/in/container
+              name: volume-name
+              readOnly: false
+            securityContext:
+              capabilities:
+                add:
+                # Specify any additional capabilities required
+                - NET_ADMIN
+                - NET_RAW
+                - SYS_ADMIN
+              privileged: true
+          # Define the restart policy (Always, OnFailure, Never)
+          restartPolicy: Never
+          imagePullSecrets:
+          # Specify the name of the secret for pulling images from private registry
+          - name: registry-secret-name
+
+# Instructions and Comments:
+# - Metadata: Update the 'name' and 'namespace' to reflect your CronJob's identity and location.
+# - Spec: Adjust 'failedJobsHistoryLimit', 'concurrencyPolicy', 'schedule', and 'successfulJobsHistoryLimit' as needed.
+# - Volumes: Define any volumes that your container requires. For hostPath volumes, ensure the path exists on the node.
+# - Containers: Update the container name, image path, and tag. Also, configure the volume mounts and security context.
+# - Restart Policy: Choose an appropriate policy based on how you want the job to behave upon completion or failure.
+# - Image Pull Secrets: If pulling from a private registry, specify the secret with the credentials.
