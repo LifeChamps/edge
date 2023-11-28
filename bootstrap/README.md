@@ -1,100 +1,86 @@
 # Bootstrap
 
-Bootstrap info for the PIs
+This guide provides instructions for setting up Raspberry Pis (RPIs) with a bootable Ubuntu image and necessary configurations for MicroK8s and FluxCD.
 
-Inspired by: https://github.com/billimek/homelab-infrastructure for getting the proper configuration on the SD cards and
-https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi for the "bootable image"
+Inspired by [billimek's homelab infrastructure](https://github.com/billimek/homelab-infrastructure) for SD card configuration, and the [Ubuntu tutorial](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi) for creating a bootable image.
 
-## Getting started
+## Getting Started
 
-### Bootable image
+### Bootable Image
 
-Follow the instructions on: https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#2-prepare-the-sd-card to prepare the SD card and install the Ubuntu Server 22.04 64Bit image.
+1. **Preparing the SD Card**: 
+   - Follow the steps outlined in the [Ubuntu tutorial](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#2-prepare-the-sd-card) to prepare the SD card with Ubuntu Server 22.04 64-bit image.
+   - Ensure the image matches the RPI's architecture.
 
-Make sure that you are using the right image with the right architecture
-![Raspberry PI Arm64 image](ubuntuRPI.png)
+   ![Raspberry PI Arm64 image](ubuntuRPI.png)
 
+### Adding Bootstrap Information 
 
-### Adding bootsrap info 
+2. **Network Configuration**: 
+   - If using Wi-Fi, update the `network-config` file with your Wi-Fi details. Ethernet connections are preferred for stability.
 
-If you use a WIFI internet connection, you can update the `network-config' file with Wi-Fi connection information. However, an ethernet connection is highly recommended. 
+## Setup Instructions
 
-## Windows Setup
-After flashing the image, reject the drive and insert it again. Copy the following files into `system-boot` drive:
+### Windows
 
-* `usercfg.txt`
-* `network-config`
-* `cmdline.txt`
-* `config.txt`
+3. **File Transfer**: 
+   - After flashing the image, reinsert the SD card. Copy the following files into the `system-boot` directory:
+     - `usercfg.txt`
+     - `network-config`
+     - `cmdline.txt`
+     - `config.txt`
+     - Copy the appropriate file from the `nodes` directory (e.g., `puc1` or `test`) and rename it to `user-data`. Replace `$UBUNTU_PASSWORD` in this file with your chosen password for the ubuntu user.
 
-*You also need to copy the proper file from nodes directory like puc1 or test and rename it to `user-data`; Remember to replace $UBUNTU_PASSWORD in the file with the password for ubuntu user
+### MAC/Linux
 
-## MAC/Linux Setup
+4. **File Transfer**:
+   - After flashing the image, remount the drive. Copy the same files as above into `<drive>/system-boot/`.
+   
+   **Option 1: Manual Setup**
+   - Follow the same procedure as for Windows.
 
-After flashing the image, re-mount the drive and copy the following files into `<drive>/system-boot/`:
+   **Option 2: Scripted Setup**
+   - Use `bootstrap.sh` script for streamlined setup. Set the Ubuntu user password using the environment variable:
+     ```shell
+     export UBUNTU_PASSWORD='YourChosenPassword'
+     ./bootstrap.sh dev /Volumes/system-boot
+     ```
+   - Unmount the filesystem on Mac:
+     ```shell
+     diskutil unmount /Volumes/system-boot/
+     ```
 
-* `usercfg.txt`
-* `network-config`
-* `cmdline.txt`
-* `config.txt`
-* `user-data`
-#### Option 1 manual
-You also need to copy the proper file from nodes directory like puc1 or test and rename it to `user-data`, Remember to replace $UBUNTU_PASSWORD in the file with the password for ubuntu user
-* `user-data`
+### Starting the RPI
 
-#### Option 2 scripted setup
+5. **Initialization**:
+   - Insert the MicroSD card into the Raspberry Pi 4 and connect it via Ethernet cable.
+   - The setup will take approximately 20 minutes, depending on internet speed and SD card performance. The process involves downloading data, installing Kubernetes applications, and deploying containers.
 
-This can be streamlined with the following script: `bootstrap.sh` that is depending on an variable to set the password for the ubuntu user:
+### Testing the Setup
 
-```shell
-export UBUNTU_PASSWORD='SampleLocalPassword'
-./bootstrap.sh dev /Volumes/system-boot
+6. **Verification**:
+   - Test the RPI using the patient mobile app or the ping API. Replace `localhost` with the RPI's IP address:
+     ```shell
+     localhost:30080/api/v1/lifechamps/ping # Should return "pong"
+     ```
 
-After that you need to unmount the filesystem. On mac you do:
+7. **Troubleshooting**:
+   - If the setup fails, wait a few minutes and retry. 
+   - For further investigation, SSH into the RPI and check the status using `microk8s.kubectl get all`. If needed, clean the cloud-init logs and reboot:
+     ```shell
+     sudo cloud-init clean --logs
+     ```
 
-```shell
-diskutil unmount /Volumes/system-boot/
-```
+### GitHub Repository Updates
 
-#### Start the RPI 
+8. **Secure Token Handling**:
+   - Be cautious when sharing an SD card with a read/write Personal Access Token (PAT). This poses a security risk.
+   - Newer RPI installations can update from the GitHub repository. However, a PAT with higher permissions than the current setup is required.
 
-Add the MicroSD card to the raspberry Pi4 and connect with an ethernet cable. After around 20 min, your system will be ready. During that period, it downloads around 1 GiB of data. The first 10 minutes are upgrading and bootstraping the base operating system, 5 minutes installing the Kubernetes applications, and around 5min for installing the containers. The bootstrapping time could differ based on internet speed and even the speed of the MicroSD card. The recommendation is to run this "job" with a good internet connection and test it before sending it to the patient's home. 
-
-### Test
-Eighter use the patient mobile app for finding RPI and test it or use the pin API
-
-replace localhost with the IP of RPI
-``` shell
-localhost:30080/api/v1/lifechamps/ping -> it returns "pong"
-```
-
-### if failed
---Wait for a few more minutes and test again
---Login to the RPI
-Check microk8s.kubectl get all
-Run 
-``` shell
-sudo cloud-init clean --logs
-```
-and reboot
-
-
-## Change so the RPI can update the gitrepos with new version
-Be careful with sharing a sd-card with read/write PAT token with anyone during the project time. This is a secutiry risk.
-
-The RPIs following installed from test have the possibility to update the gitrepos when new images are aviable, but need to have a PAT token with higher permission than the one in this repo. 
-
-To add a new PAT token, you first need to create one at: https://gitlab.com/-/profile/personal_access_tokens
-It needs to have the following scopes: 
-
-- read_repository
-- write_repository
-
-Login in to the RPI with ssh, and run the following command as root:
-```shell
-microk8s.kubectl delete secret -n flux-system flux-system #Delete old secret
-microk8s.kubectl create secret -n flux-system generic flux-system --from-literal=username=git --from-literal=password=glpat-mysecret-pat-from-above # Create new one with higher permission
-```
-
-
-
+9. **Creating and Updating PAT**:
+   - Generate a new PAT on GitHub with the necessary scopes (read and write access). Visit [GitHub Personal Access Tokens](https://github.com/settings/tokens).
+   - To update the PAT on the RPI, SSH into the device and execute the following as root:
+     ```shell
+     microk8s.kubectl delete secret -n flux-system flux-system # Delete old secret
+     microk8s.kubectl create secret -n flux-system generic flux-system --from-literal=username=<github_username> --from-literal=password=<new_pat> # Create new one with higher permission
+     ```
