@@ -6,4 +6,4 @@ resources:
   - service.yaml
   - fetch-secret.yaml
   - your-service.yaml
-  - your-service-volume.yaml
+  - integration-volume.yaml
