@@ -84,3 +84,7 @@ Inspired by [billimek's homelab infrastructure](https://github.com/billimek/home
      microk8s.kubectl delete secret -n flux-system flux-system # Delete old secret
      microk8s.kubectl create secret -n flux-system generic flux-system --from-literal=username=<github_username> --from-literal=password=<new_pat> # Create new one with higher permission
      ```
+
+## License
+
+See the [LICENSE](../LICENSE) file for licensing details.
