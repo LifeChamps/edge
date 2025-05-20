@@ -39,12 +39,14 @@ Inspired by [billimek's homelab infrastructure](https://github.com/billimek/home
    **Option 1: Manual Setup**
    - Follow the same procedure as for Windows.
 
-   **Option 2: Scripted Setup**
-   - Use `bootstrap.sh` script for streamlined setup. Set the Ubuntu user password using the environment variable:
-     ```shell
-     export UBUNTU_PASSWORD='YourChosenPassword'
-     ./bootstrap.sh dev /Volumes/system-boot
-     ```
+  **Option 2: Scripted Setup**
+  - Use `bootstrap.sh` for a streamlined setup. From the repository root, copy the example environment file and set your Ubuntu password:
+    ```shell
+    cp bootstrap/.env.example .env
+    # edit .env and set UBUNTU_PASSWORD
+    cd bootstrap
+    ./bootstrap.sh dev /Volumes/system-boot
+    ```
    - Unmount the filesystem on Mac:
      ```shell
      diskutil unmount /Volumes/system-boot/
