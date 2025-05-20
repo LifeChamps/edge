@@ -35,7 +35,7 @@ Contributions to improve the configurations or the deployment process are welcom
 
 ## License
 
-This work is licensed under the Creative Commons Attribution-NonCommercial (CC BY-NC) license. This license allows others to remix, tweak, and build upon this work non-commercially, as long as they credit the original creation and license their new creations under identical terms. For more details, see [CC BY-NC License](https://creativecommons.org/licenses/by-nc/4.0/).
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. See the [LICENSE](../LICENSE) file for the complete license text.
 
 ## Acknowledgments
 
